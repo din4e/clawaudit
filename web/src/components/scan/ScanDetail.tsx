@@ -8,7 +8,7 @@ import { clearSelectedScan } from '@/store/slices/scansSlice';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { Progress, Badge, Button, Card, EmptyState, SummaryCard } from '@/components/ui';
 import { RefreshCw, Trash2, CheckCircle2, AlertTriangle, AlertCircle, Info, Loader2, FileText, Activity, Download, Shield, Code, Zap } from 'lucide-react';
-import { formatTime, getStatusText, isScanActive } from '@/lib/api';
+import { formatTime, getStatusText, isScanActive, API_BASE } from '@/lib/api';
 import styles from './ScanDetail.module.css';
 
 interface ProgressLog {
@@ -82,13 +82,8 @@ export function ScanDetail() {
   const handleDownloadJson = async () => {
     if (!scanId) return;
 
-    // 使用 fetch API 直接下载 JSON 文件
-    const baseUrl = window.location.hostname === 'localhost'
-      ? 'http://localhost:8080'
-      : '';
-
     try {
-      const response = await fetch(`${baseUrl}/api/scan/${scanId}/output/file`);
+      const response = await fetch(`${API_BASE.replace('/api', '')}/api/scan/${scanId}/output/file`);
       if (!response.ok) {
         throw new Error('下载失败');
       }

@@ -1,10 +1,44 @@
 // API Configuration
+// Priority: 1. Environment variable, 2. localhost fallback, 3. relative path (production)
 
-// For development, use localhost:8080
-// For production (served by Go backend), use relative path
-const API_BASE = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-  ? 'http://localhost:8080/api'
-  : '/api';
+function getApiBaseUrl(): string {
+  if (typeof window === 'undefined') return '/api';
+
+  const envApiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envApiUrl) return `${envApiUrl}/api`;
+
+  // Auto-detect backend port for development
+  if (window.location.hostname === 'localhost') {
+    // Try common ports in order
+    const commonPorts = [9999, 8080, 3000, 8000];
+    // Use the current frontend port + 1 as fallback
+    const frontendPort = parseInt(window.location.port) || 4200;
+    const backendPort = frontendPort + 1;
+
+    return `http://localhost:${backendPort}/api`;
+  }
+
+  return '/api';
+}
+
+function getWsBaseUrl(): string {
+  if (typeof window === 'undefined') return 'ws://localhost:9999';
+
+  const envWsUrl = process.env.NEXT_PUBLIC_WS_URL;
+  if (envWsUrl) return envWsUrl;
+
+  if (window.location.hostname === 'localhost') {
+    const frontendPort = parseInt(window.location.port) || 4200;
+    const backendPort = frontendPort + 1;
+    return `ws://localhost:${backendPort}`;
+  }
+
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${protocol}//${window.location.host}`;
+}
+
+export const API_BASE = getApiBaseUrl();
+export const WS_BASE = getWsBaseUrl();
 
 export const apiConfig = {
   base: API_BASE,

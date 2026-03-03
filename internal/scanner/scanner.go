@@ -273,27 +273,30 @@ func (s *Scanner) scanBatch(ctx context.Context, batchIndex int, files []FileWit
 	return result
 }
 
-// callClaude 调用Claude API
+// callClaude 调用Claude API（使用新的 -p 方式）
 func (s *Scanner) callClaude(ctx context.Context, codeContent string, scanTypes []models.ScanType, sandboxDir string) ([]models.Issue, int, error) {
-	// 构建提示词
+	// 构建系统提示
 	scanTypeStrs := make([]string, len(scanTypes))
 	for i, st := range scanTypes {
 		scanTypeStrs[i] = string(st)
 	}
 
-	prompt := s.contextManager.BuildSystemPrompt(scanTypeStrs)
-	userMessage := fmt.Sprintf("请审计以下代码：\n\n%s", codeContent)
+	systemPrompt := s.contextManager.BuildSystemPrompt(scanTypeStrs)
+	userPrompt := s.contextManager.BuildUserPrompt()
+	jsonSchema := s.contextManager.BuildJSONSchema()
 
-	// 构建命令 - 使用 stdin 传递输入，这样更可靠
-	cmd := exec.CommandContext(ctx, s.claudePath,
+	// 构建命令参数 - 使用新的 API 方式
+	args := []string{
+		"-p", userPrompt,
+		"--append-system-prompt", systemPrompt,
+		"--json-schema", jsonSchema,
+		"--output-format", "json",
+		"--allowedTools", "Read",
 		"--dangerously-skip-permissions",
-	)
+	}
 
-	// 设置工作目录为 repo/{id}/
+	cmd := exec.CommandContext(ctx, s.claudePath, args...)
 	cmd.Dir = sandboxDir
-
-	// 设置输入
-	cmd.Stdin = strings.NewReader(prompt + "\n\n" + userMessage)
 
 	// 执行命令并获取输出
 	output, err := cmd.CombinedOutput()
@@ -301,7 +304,32 @@ func (s *Scanner) callClaude(ctx context.Context, codeContent string, scanTypes 
 		return nil, 0, fmt.Errorf("claude command failed: %w\nOutput: %s", err, string(output))
 	}
 
-	// 解析响应
+	// 解析 Claude CLI 的 JSON 响应格式
+	var cliResponse struct {
+		Result           json.RawMessage `json:"result"`            // text 格式时的结果
+		StructuredOutput json.RawMessage `json:"structured_output"` // json-schema 格式时的结果
+		SessionID        string          `json:"session_id"`
+		Usage            struct {
+			InputTokens  int `json:"input_tokens"`
+			OutputTokens int `json:"output_tokens"`
+		} `json:"usage"`
+	}
+
+	if err := json.Unmarshal(output, &cliResponse); err != nil {
+		return nil, 0, fmt.Errorf("failed to parse CLI response: %w\nOutput: %s", err, string(output))
+	}
+
+	// 使用 structured_output 或 result
+	var responseData []byte
+	if len(cliResponse.StructuredOutput) > 0 {
+		responseData = cliResponse.StructuredOutput
+	} else if len(cliResponse.Result) > 0 {
+		responseData = cliResponse.Result
+	} else {
+		return nil, 0, fmt.Errorf("no result in response: %s", string(output))
+	}
+
+	// 解析审计结果
 	var response struct {
 		ProjectAnalysis string `json:"project_analysis"`
 		Issues         []struct {
@@ -321,14 +349,10 @@ func (s *Scanner) callClaude(ctx context.Context, codeContent string, scanTypes 
 			POC             string `json:"poc"`
 			POCVerification string `json:"poc_verification"`
 		} `json:"issues"`
-		Usage  struct {
-			InputTokens  int `json:"input_tokens"`
-			OutputTokens int `json:"output_tokens"`
-		} `json:"usage"`
 	}
 
-	if err := json.Unmarshal(output, &response); err != nil {
-		return nil, 0, fmt.Errorf("failed to parse response: %w\nOutput: %s", err, string(output))
+	if err := json.Unmarshal(responseData, &response); err != nil {
+		return nil, 0, fmt.Errorf("failed to parse audit result: %w\nData: %s", err, string(responseData))
 	}
 
 	// 转换为标准 Issue 格式
@@ -341,7 +365,8 @@ func (s *Scanner) callClaude(ctx context.Context, codeContent string, scanTypes 
 			ScanType:    models.ScanType(iss.Type),
 			File:        iss.File,
 			Line:        iss.Line,
-			Description: fmt.Sprintf("**项目分析**\n\n%s\n\n**漏洞介绍（中文）**\n\n%s\n\n**漏洞介绍（英文）**\n\n%s\n\n**影响版本**\n\n%s\n\n**分析细节**\n\n%s\n\n**POC**\n\n%s\n\n**POC验证**\n\n%s",
+			Description: fmt.Sprintf(
+				"**项目分析**\n\n%s\n\n**漏洞介绍（中文）**\n\n%s\n\n**漏洞介绍（英文）**\n\n%s\n\n**影响版本**\n\n%s\n\n**分析细节**\n\n%s\n\n**POC**\n\n%s\n\n**POC验证**\n\n%s",
 				response.ProjectAnalysis,
 				iss.IntroductionCN,
 				iss.IntroductionEN,
@@ -353,7 +378,7 @@ func (s *Scanner) callClaude(ctx context.Context, codeContent string, scanTypes 
 		}
 	}
 
-	return issues, response.Usage.InputTokens + response.Usage.OutputTokens, nil
+	return issues, cliResponse.Usage.InputTokens + cliResponse.Usage.OutputTokens, nil
 }
 
 // listCodeFiles 列出代码文件

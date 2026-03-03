@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { WS_BASE } from '@/lib/api';
 
 interface WebSocketMessage {
   type: 'connected' | 'progress' | 'batch_start' | 'batch_complete' | 'complete' | 'error' | 'step' | 'file_scan' | 'claude_response';
@@ -41,11 +42,8 @@ export function useWebSocket(scanId: string, options: UseWebSocketOptions = {}) 
   const connect = useCallback(() => {
     if (!scanId) return;
 
-    // Determine WebSocket URL based on current location
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.hostname;
-    const port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
-    const wsUrl = `${protocol}//${host}:${port}/ws/scan/${scanId}`;
+    // Use configured WebSocket URL
+    const wsUrl = `${WS_BASE}/ws/scan/${scanId}`;
 
     try {
       wsRef.current = new WebSocket(wsUrl);

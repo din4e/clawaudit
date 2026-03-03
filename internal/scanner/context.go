@@ -157,68 +157,74 @@ func (cm *ContextManager) detectLanguage(path string) string {
 	return "Unknown"
 }
 
-// BuildSystemPrompt 构建系统提示词
+// BuildUserPrompt 构建用户提示（通过 -p 参数传递）
+func (cm *ContextManager) BuildUserPrompt() string {
+	return `请审计当前目录下的代码，专注于安全漏洞分析。`
+}
+
+// BuildJSONSchema 构建用于结构化输出的 JSON Schema
+func (cm *ContextManager) BuildJSONSchema() string {
+	return `{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "project_analysis": {
+      "type": "string",
+      "description": "项目结构分析"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "title_cn": {"type": "string"},
+          "title_en": {"type": "string"},
+          "severity": {"type": "string", "enum": ["critical", "high", "medium", "low", "info"]},
+          "type": {"type": "string", "enum": ["XSS", "SSTI", "RCE", "SQLi", "SSRF", "Other"]},
+          "file": {"type": "string"},
+          "line": {"type": "integer"},
+          "code_snippet": {"type": "string"},
+          "description": {"type": "string"},
+          "introduction_cn": {"type": "string"},
+          "introduction_en": {"type": "string"},
+          "affected_versions": {"type": "string"},
+          "analysis_detail": {"type": "string"},
+          "poc": {"type": "string"},
+          "poc_verification": {"type": "string"}
+        },
+        "required": ["id", "title_cn", "title_en", "severity", "type", "file", "line"]
+      }
+    }
+  },
+  "required": ["project_analysis", "issues"]
+}`
+}
+
+// BuildSystemPrompt 构建系统提示词（通过 --append-system-prompt 传递）
 func (cm *ContextManager) BuildSystemPrompt(scanTypes []string) string {
-	// 检测主要语言
 	primaryLang := cm.detectPrimaryLanguage(scanTypes)
 
-	prompt := fmt.Sprintf(`你是一个%s语言安全专家。
+	prompt := fmt.Sprintf(`你是%s语言安全专家。
 
 ## 任务要求
 
-0. 首先 commit，备份代码，已经备份就跳过；
-
-1. 请先分析项目结构，然后给出代码**安全审计**，不需要给出修复建议及相应时间计划；
-
-2. 审计类型包括 XSS，SSTI，RCE，SQLi，SSRF等，忽略以下类型CORS；
-
-3. 针对每个漏洞，给出详细报告和严重性POC，给出中英文两份漏洞报告，报告包含四部分：
-   - 介绍
+1. 分析项目结构，进行代码**安全审计**
+2. 审计类型：XSS、SSTI、RCE、SQLi、SSRF 等（忽略 CORS）
+3. 针对每个漏洞提供：
+   - 漏洞介绍（中英文）
    - 影响版本
    - 分析细节
-   - POC
+   - POC 代码
+   - POC 验证结果
 
-4. 然后针对每个漏洞展开细致的检验；
-
-5. 然后对每个漏洞POC展开检验；
-
-6. 梳理文档。
-
-## 输出格式
-
-请以JSON格式输出，包含以下字段：
-{
-  "project_analysis": "项目结构分析",
-  "issues": [
-    {
-      "id": "唯一ID",
-      "title_cn": "漏洞标题（中文）",
-      "title_en": "漏洞标题（英文）",
-      "severity": "critical|high|medium|low|info",
-      "type": "XSS|SSTI|RCE|SQLi|SSRF|Other",
-      "file": "文件路径",
-      "line": 行号,
-      "code_snippet": "问题代码",
-      "description": "详细描述",
-      "introduction_cn": "漏洞介绍（中文）",
-      "introduction_en": "漏洞介绍（英文）",
-      "affected_versions": "影响版本",
-      "analysis_detail": "分析细节",
-      "poc": "POC代码",
-      "poc_verification": "POC验证结果"
-    }
-  ]
-}
-
-请开始审计：`, primaryLang)
+使用 Read 工具读取代码文件进行审计。`, primaryLang)
 
 	return prompt
 }
 
 // detectPrimaryLanguage 检测主要编程语言
 func (cm *ContextManager) detectPrimaryLanguage(scanTypes []string) string {
-	// 尝试从上下文中获取实际的语言信息
-	// 这里简化处理，返回通用的描述
 	if len(scanTypes) > 0 {
 		return "多语言"
 	}
