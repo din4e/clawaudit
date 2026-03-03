@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { API_BASE } from '@/lib/api';
 import type {
   Scan,
   ScanStatusResponse,
@@ -23,21 +24,9 @@ import type {
   StatsResponse,
 } from '@/types/api';
 
-// Determine base URL based on environment
-const getBaseUrl = () => {
-  if (typeof window === 'undefined') {
-    return '/api'; // Server-side default
-  }
-  return window.location.hostname === 'localhost'
-    ? 'http://localhost:8080/api'
-    : '/api';
-};
-
-const BASE_URL = getBaseUrl();
-
 // Create a base query with proper headers handling
 const baseQuery = fetchBaseQuery({
-  baseUrl: BASE_URL,
+  baseUrl: API_BASE,
   prepareHeaders: (headers) => {
     headers.set('Content-Type', 'application/json');
     return headers;

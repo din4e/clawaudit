@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useAppSelector, useAppDispatch } from '@/hooks/redux';
 import { selectSelectedScanId, fetchScans } from '@/store/slices/scansSlice';
 import { useGetScanQuery, useDeleteScanMutation, useGetScanOutputQuery } from '@/store/services/api';
@@ -19,7 +19,7 @@ interface ProgressLog {
   data?: any;
 }
 
-export function ScanDetail() {
+export const ScanDetail = React.memo(function ScanDetail() {
   const dispatch = useAppDispatch();
   const scanId = useAppSelector(selectSelectedScanId);
 
@@ -30,8 +30,57 @@ export function ScanDetail() {
   const [deleteScan, { isLoading: isDeleting }] = useDeleteScanMutation();
   const [progressLogs, setProgressLogs] = useState<ProgressLog[]>([]);
   const [currentBatch, setCurrentBatch] = useState<{ id: number; files: string[] } | null>(null);
-  const [totalFiles, setTotalFiles] = useState(0);
-  const [totalBatches, setTotalBatches] = useState(0);
+
+  // Memoize summary to avoid recalculations
+  const summary = useMemo(() => scan?.summary || {
+    severity_critical: 0,
+    severity_high: 0,
+    severity_medium: 0,
+    severity_low: 0,
+    severity_info: 0,
+  }, [scan?.summary]);
+
+  // Stable callbacks
+  const handleRefresh = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  const handleDelete = useCallback(async () => {
+    if (!scanId) return;
+    if (!confirm('确定要删除这条扫描记录吗？此操作不可恢复。')) {
+      return;
+    }
+    try {
+      await deleteScan(scanId).unwrap();
+      dispatch(clearSelectedScan());
+      dispatch(fetchScans({}));
+    } catch (error) {
+      alert('删除失败: ' + (error as Error).message);
+    }
+  }, [scanId, deleteScan, dispatch]);
+
+  const handleDownloadJson = useCallback(async () => {
+    if (!scanId) return;
+
+    try {
+      const response = await fetch(`${API_BASE.replace('/api', '')}/api/scan/${scanId}/output/file`);
+      if (!response.ok) {
+        throw new Error('下载失败');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `scan-${scanId}-output.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      alert('下载 JSON 失败: ' + (error as Error).message);
+    }
+  }, [scanId]);
 
   // WebSocket connection for real-time updates
   useWebSocket(scanId || '', {
@@ -60,47 +109,6 @@ export function ScanDetail() {
       refetch();
     },
   });
-
-  const handleRefresh = () => {
-    refetch();
-  };
-
-  const handleDelete = async () => {
-    if (!scanId) return;
-    if (!confirm('确定要删除这条扫描记录吗？此操作不可恢复。')) {
-      return;
-    }
-    try {
-      await deleteScan(scanId).unwrap();
-      dispatch(clearSelectedScan());
-      dispatch(fetchScans({}));
-    } catch (error) {
-      alert('删除失败: ' + (error as Error).message);
-    }
-  };
-
-  const handleDownloadJson = async () => {
-    if (!scanId) return;
-
-    try {
-      const response = await fetch(`${API_BASE.replace('/api', '')}/api/scan/${scanId}/output/file`);
-      if (!response.ok) {
-        throw new Error('下载失败');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `scan-${scanId}-output.json`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      alert('下载 JSON 失败: ' + (error as Error).message);
-    }
-  };
 
   if (!scanId) {
     return (
@@ -342,4 +350,4 @@ export function ScanDetail() {
       ) : null}
     </div>
   );
-}
+});

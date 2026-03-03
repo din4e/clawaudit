@@ -1,20 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Modal, Input, CheckboxGroup, Button } from '@/components/ui';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { selectActiveModal, closeModal } from '@/store/slices/uiSlice';
 import { useCreateScanMutation } from '@/store/services/api';
 import { selectScan, fetchScans } from '@/store/slices/scansSlice';
 import type { ScanType } from '@/types/api';
-
-interface FormData {
-  repoPath: string;
-  branch: string;
-  scanTypes: string[];
-  batchSize: number;
-  maxContext: number;
-}
 
 const quickPaths = [
   'D:\\tmp\\code-auditor',
@@ -29,7 +21,7 @@ const scanTypeOptions: { value: ScanType; label: string; checked?: boolean }[] =
   { value: 'compliance', label: '合规检查' },
 ];
 
-export function LocalScanModal() {
+export const LocalScanModal = React.memo(function LocalScanModal() {
   const dispatch = useAppDispatch();
   const isOpen = useAppSelector(selectActiveModal) === 'local-scan';
   const [createScan, { isLoading }] = useCreateScanMutation();
@@ -40,11 +32,11 @@ export function LocalScanModal() {
   const [batchSize, setBatchSize] = useState(5);
   const [maxContext, setMaxContext] = useState(100000);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     dispatch(closeModal());
-  };
+  }, [dispatch]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!repoPath.trim()) {
@@ -67,16 +59,16 @@ export function LocalScanModal() {
       }).unwrap();
 
       dispatch(selectScan(result.scan_id));
-      dispatch(fetchScans({})); // Refresh the scan list in sidebar
+      dispatch(fetchScans({}));
       handleClose();
     } catch (error) {
       alert('创建扫描失败: ' + (error as Error).message);
     }
-  };
+  }, [repoPath, branch, scanTypes, batchSize, maxContext, createScan, dispatch, handleClose]);
 
-  const handleSetQuickPath = (path: string) => {
+  const handleSetQuickPath = useCallback((path: string) => {
     setRepoPath(path);
-  };
+  }, []);
 
   return (
     <Modal
@@ -154,4 +146,4 @@ export function LocalScanModal() {
       </form>
     </Modal>
   );
-}
+});
