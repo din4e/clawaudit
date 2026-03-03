@@ -1,0 +1,59 @@
+.badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+.badge.pending,
+.badge.scanning {
+  background-color: rgba(88, 166, 255, 0.15);
+  color: var(--color-info);
+}
+
+.badge.completed {
+  background-color: rgba(63, 185, 80, 0.15);
+  color: var(--color-success);
+}
+
+.badge.failed {
+  background-color: rgba(248, 81, 73, 0.15);
+  color: var(--color-danger);
+}
+
+.badge.cloning {
+  background-color: rgba(210, 153, 34, 0.15);
+  color: var(--severity-high);
+}
+
+.badge.cloned {
+  background-color: rgba(63, 185, 80, 0.15);
+  color: var(--color-success);
+}
+
+.badge.critical {
+  background-color: rgba(248, 81, 73, 0.15);
+  color: var(--severity-critical);
+}
+
+.badge.high {
+  background-color: rgba(210, 153, 34, 0.15);
+  color: var(--severity-high);
+}
+
+.badge.medium {
+  background-color: rgba(219, 109, 40, 0.15);
+  color: var(--severity-medium);
+}
+
+.badge.low {
+  background-color: rgba(125, 133, 144, 0.15);
+  color: var(--severity-low);
+}
+
+.badge.info {
+  background-color: rgba(88, 166, 255, 0.15);
+  color: var(--severity-info);
+}

@@ -1,0 +1,1 @@
+export { ScanDetail } from './ScanDetail';

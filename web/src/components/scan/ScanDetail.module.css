@@ -1,0 +1,422 @@
+/* 欢迎页面 - 美化布局 */
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  flex: 1;
+  padding: var(--spacing-xl, 32px);
+}
+
+.welcomeIcon {
+  margin-bottom: var(--spacing-xl, 32px);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, rgba(88, 166, 255, 0.2) 100%);
+  box-shadow: 0 8px 32px rgba(88, 166, 255, 0.2);
+  /* 轻微的浮动动画 */
+  animation: float 3s ease-in-out infinite;
+}
+
+.welcomeIcon svg {
+  color: #fff;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.welcome h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md, 16px);
+  color: var(--color-text-primary);
+  letter-spacing: -0.5px;
+}
+
+.welcome p {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+/* 添加特性列表 */
+.features {
+  display: flex;
+  gap: var(--spacing-md, 16px);
+  margin-top: var(--spacing-2xl, 48px);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  padding: var(--spacing-md, 16px) var(--spacing-lg, 24px);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 8px);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+}
+
+.feature:hover {
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-text-secondary);
+}
+
+.detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl, 32px);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-lg, 24px);
+  gap: var(--spacing-md, 16px);
+}
+
+.info h2 {
+  font-size: 24px;
+  margin-bottom: var(--spacing-sm, 8px);
+  color: var(--color-text-primary);
+}
+
+.meta {
+  display: flex;
+  gap: var(--spacing-md, 16px);
+  align-items: center;
+}
+
+.time {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  flex-shrink: 0;
+}
+
+.progressSection {
+  margin-bottom: var(--spacing-lg, 24px);
+}
+
+.summaryCards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md, 16px);
+  margin-bottom: var(--spacing-lg, 24px);
+}
+
+@media (max-width: 768px) {
+  .summaryCards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.batchesSection {
+  margin-bottom: var(--spacing-lg, 24px);
+}
+
+.batchesSection h3 {
+  font-size: 16px;
+  margin-bottom: var(--spacing-md, 16px);
+  color: var(--color-text-primary);
+}
+
+.batchesList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-md, 16px);
+}
+
+.batchItem {
+  cursor: pointer;
+}
+
+.batchHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm, 8px);
+}
+
+.batchId {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.batchStatus {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.batchStatus.completed {
+  background-color: var(--color-success);
+}
+
+.batchStatus.scanning {
+  background-color: var(--color-warning);
+}
+
+.batchStatus.pending {
+  background-color: var(--color-text-secondary);
+}
+
+.batchStatus.failed {
+  background-color: var(--color-danger);
+}
+
+.batchInfo {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.issuesSection {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 6px);
+}
+
+.issuesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md, 16px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.issuesHeader h3 {
+  font-size: 16px;
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.issuesCount {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.issuesList {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.issueItem {
+  padding: var(--spacing-md, 16px);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.15s ease;
+}
+
+.issueItem:last-child {
+  border-bottom: none;
+}
+
+.issueItem:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.issueHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-sm, 8px);
+  gap: var(--spacing-sm, 8px);
+}
+
+.issueTitle {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.issueLocation {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm, 8px);
+  font-family: monospace;
+}
+
+.issueDescription {
+  font-size: 13px;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm, 8px);
+}
+
+.issueCode {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm, 4px);
+  padding: var(--spacing-sm, 8px);
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 12px;
+  overflow-x: auto;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Live indicator */
+.liveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background-color: var(--color-bg-secondary);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--color-success);
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-success);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Enhanced progress section */
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm, 8px);
+}
+
+.progressInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+}
+
+.progressIcon {
+  color: var(--color-primary);
+}
+
+.progressLabel {
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+
+.progressPercent {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* Current batch info */
+.currentBatch {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  padding: var(--spacing-sm, 8px) 12px;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-sm, 4px);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-sm, 8px);
+}
+
+/* Progress logs */
+.progressLogs {
+  margin-top: var(--spacing-md, 16px);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm, 4px);
+  padding: var(--spacing-sm, 8px);
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.logItem {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.logTime {
+  color: var(--color-text-secondary);
+  min-width: 70px;
+}
+
+.logMessage {
+  color: var(--color-text-primary);
+}
+
+/* Spinner */
+.spinner {
+  animation: spin 1s linear infinite;
+  margin-right: var(--spacing-sm, 8px);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Active batch highlight */
+.batchActive {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Batch progress */
+.batchProgress {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  margin-top: var(--spacing-sm, 8px);
+  font-size: 12px;
+  color: var(--color-primary);
+}
+
+.batchSpinner {
+  animation: spin 1s linear infinite;
+}

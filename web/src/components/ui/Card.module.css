@@ -1,0 +1,82 @@
+.card {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md, 6px);
+  transition: all 0.15s ease;
+}
+
+.card.default {
+  background-color: var(--color-bg);
+}
+
+.card.bordered {
+  border: 1px solid var(--color-border);
+}
+
+.card.elevated {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card.clickable {
+  cursor: pointer;
+}
+
+.card.clickable:hover {
+  border-color: var(--color-primary);
+}
+
+.card.none {
+  padding: 0;
+}
+
+.card.sm {
+  padding: var(--spacing-sm, 8px);
+}
+
+.card.md {
+  padding: var(--spacing-md, 16px);
+}
+
+.card.lg {
+  padding: var(--spacing-lg, 24px);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md, 16px);
+  border: 1px solid var(--color-border);
+}
+
+.summary.critical .icon {
+  color: var(--severity-critical);
+}
+
+.summary.high .icon {
+  color: var(--severity-high);
+}
+
+.summary.medium .icon {
+  color: var(--severity-medium);
+}
+
+.summary.low .icon {
+  color: var(--severity-low);
+}
+
+.summary .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.summary .value {
+  font-size: 24px;
+  font-weight: 600;
+  display: block;
+  color: var(--color-text-primary);
+}
+
+.summary .label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}

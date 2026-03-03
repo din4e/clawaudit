@@ -1,0 +1,72 @@
+.container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.sidebar {
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* 容器不需要padding，由内部Sidebar组件控制 */
+}
+
+.resizer {
+  width: 5px;
+  flex-shrink: 0;
+  background-color: transparent;
+  cursor: col-resize;
+  position: relative;
+  transition: background-color 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 确保分割线延伸到底部 */
+  height: 100%;
+  /* 增加热区范围 */
+  margin-left: -2px;
+  margin-right: -2px;
+}
+
+.resizer:hover {
+  background-color: rgba(88, 166, 255, 0.1);
+}
+
+.resizer.resizing {
+  background-color: rgba(88, 166, 255, 0.2);
+}
+
+.resizerHandle {
+  width: 2px;
+  height: 100%;
+  background-color: transparent;
+  border-radius: 1px;
+  transition: background-color 0.15s ease;
+  /* 分割线延伸到整个高度 */
+}
+
+.resizer:hover .resizerHandle {
+  background-color: var(--color-primary);
+}
+
+.resizer.resizing .resizerHandle {
+  background-color: var(--color-primary);
+}
+
+.main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Prevent flex items from overflowing */
+  min-height: 0; /* Allow flex items to shrink below content size */
+}
+
+/* Mobile: hide resizer and use fixed sidebar width */
+@media (max-width: 768px) {
+  .resizer {
+    display: none;
+  }
+}

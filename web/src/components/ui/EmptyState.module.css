@@ -1,0 +1,33 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl, 32px);
+  text-align: center;
+  color: var(--color-text-secondary);
+  min-height: 200px;
+}
+
+.empty svg {
+  margin-bottom: var(--spacing-md, 16px);
+  opacity: 0.5;
+  color: var(--color-text-secondary);
+}
+
+.empty h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 var(--spacing-sm, 8px) 0;
+  color: var(--color-text-primary);
+}
+
+.empty p {
+  font-size: 14px;
+  margin: 0;
+  max-width: 400px;
+}
+
+.empty .action {
+  margin-top: var(--spacing-lg, 24px);
+}

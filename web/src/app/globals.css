@@ -1,0 +1,163 @@
+/* 全局样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-bg: #0d1117;
+  --color-bg-secondary: #161b22;
+  --color-bg-tertiary: #21262d;
+  --color-border: #30363d;
+  --color-text: #c9d1d9;
+  --color-text-secondary: #8b949e;
+  --color-text-primary: #f0f6fc;
+  --color-primary: #58a6ff;
+  --color-primary-hover: #79b8ff;
+  --color-danger: #f85149;
+  --color-warning: #d29922;
+  --color-success: #3fb950;
+  --color-info: #58a6ff;
+
+  --severity-critical: #f85149;
+  --severity-high: #d29922;
+  --severity-medium: #db6d28;
+  --severity-low: #7d8590;
+  --severity-info: #58a6ff;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+/* 浅色主题（仿 GitLab 风格） */
+[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-bg-secondary: #fbfbfc;
+  --color-bg-tertiary: #f2f2f2;
+  --color-border: #dbdbdb;
+  --color-text: #333238;
+  --color-text-secondary: #5e5e5e;
+  --color-text-primary: #1f1f1f;
+  --color-primary: #3777b3;
+  --color-primary-hover: #2f5f8f;
+  --color-danger: #d93f0b;
+  --color-warning: #8f4f00;
+  --color-success: #108548;
+  --color-info: #1f78d1;
+
+  --severity-critical: #9f1616;
+  --severity-high: #8f4f00;
+  --severity-medium: #6b4f00;
+  --severity-low: #3a3a3a;
+  --severity-info: #0b5cad;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-secondary);
+}
+
+/* 表单元素样式 */
+button {
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* 链接样式 */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* 代码样式 */
+code {
+  background-color: var(--color-bg-tertiary);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 0.9em;
+}
+
+pre {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm);
+  overflow-x: auto;
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 12px;
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 重置表单样式 */
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

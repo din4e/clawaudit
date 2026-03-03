@@ -1,0 +1,37 @@
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.checkbox .label {
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 8px);
+}
+
+.groupLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xs, 4px);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 8px);
+}
