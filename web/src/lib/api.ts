@@ -9,13 +9,8 @@ function getApiBaseUrl(): string {
 
   // Auto-detect backend port for development
   if (window.location.hostname === 'localhost') {
-    // Try common ports in order
-    const commonPorts = [9999, 8080, 3000, 8000];
-    // Use the current frontend port + 1 as fallback
-    const frontendPort = parseInt(window.location.port) || 4200;
-    const backendPort = frontendPort + 1;
-
-    return `http://localhost:${backendPort}/api`;
+    // Backend runs on port 9999
+    return 'http://localhost:9999/api';
   }
 
   return '/api';

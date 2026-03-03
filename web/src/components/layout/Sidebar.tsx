@@ -89,4 +89,4 @@ export const Sidebar = React.memo(function Sidebar() {
       </div>
     </aside>
   );
-}
+});

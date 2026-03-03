@@ -6,19 +6,19 @@ import { Sidebar, ResizableSplitPane } from '@/components/layout';
 import { ScanDetail } from '@/components/scan';
 
 // Code split modals for better bundle size
-const LocalScanModal = dynamic(() => import('@/components/modal/LocalScanModal'), {
+const LocalScanModal = dynamic(() => import('@/components/modal/LocalScanModal').then(m => ({ default: m.LocalScanModal })), {
   loading: () => null,
 });
 
-const GitLabModal = dynamic(() => import('@/components/modal/GitLabModal'), {
+const GitLabModal = dynamic(() => import('@/components/modal/GitLabModal').then(m => ({ default: m.GitLabModal })), {
   loading: () => null,
 });
 
-const GitHubModal = dynamic(() => import('@/components/modal/GitHubModal'), {
+const GitHubModal = dynamic(() => import('@/components/modal/GitHubModal').then(m => ({ default: m.GitHubModal })), {
   loading: () => null,
 });
 
-const UrlModal = dynamic(() => import('@/components/modal/UrlModal'), {
+const UrlModal = dynamic(() => import('@/components/modal/UrlModal').then(m => ({ default: m.UrlModal })), {
   loading: () => null,
 });
 

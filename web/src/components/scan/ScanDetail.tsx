@@ -154,14 +154,6 @@ export const ScanDetail = React.memo(function ScanDetail() {
     );
   }
 
-  const summary = scan.summary || {
-    severity_critical: 0,
-    severity_high: 0,
-    severity_medium: 0,
-    severity_low: 0,
-    severity_info: 0,
-  };
-
   const severityIcons = {
     critical: <AlertCircle size={24} />,
     high: <AlertTriangle size={24} />,

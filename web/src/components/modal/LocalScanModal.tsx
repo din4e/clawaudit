@@ -7,6 +7,7 @@ import { selectActiveModal, closeModal } from '@/store/slices/uiSlice';
 import { useCreateScanMutation } from '@/store/services/api';
 import { selectScan, fetchScans } from '@/store/slices/scansSlice';
 import type { ScanType } from '@/types/api';
+import { getErrorMessage } from '@/lib/error';
 
 const quickPaths = [
   'D:\\tmp\\code-auditor',
@@ -61,8 +62,8 @@ export const LocalScanModal = React.memo(function LocalScanModal() {
       dispatch(selectScan(result.scan_id));
       dispatch(fetchScans({}));
       handleClose();
-    } catch (error) {
-      alert('创建扫描失败: ' + (error as Error).message);
+    } catch (error: unknown) {
+      alert('创建扫描失败: ' + getErrorMessage(error));
     }
   }, [repoPath, branch, scanTypes, batchSize, maxContext, createScan, dispatch, handleClose]);
 

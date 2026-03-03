@@ -10,6 +10,7 @@ import { selectScan, fetchScans } from '@/store/slices/scansSlice';
 import { useDebounce } from '@/hooks/useDebounce';
 import type { ScanType } from '@/types/api';
 import { Star, GitFork } from 'lucide-react';
+import { getErrorMessage } from '@/lib/error';
 
 const scanTypeOptions: { value: ScanType; label: string; checked?: boolean }[] = [
   { value: 'security', label: '安全漏洞', checked: true },
@@ -81,8 +82,8 @@ export function GitLabModal() {
       } else {
         alert('Token 验证失败');
       }
-    } catch (error) {
-      alert('连接失败: ' + (error as Error).message);
+    } catch (error: unknown) {
+      alert('连接失败: ' + getErrorMessage(error));
     }
   };
 
@@ -115,8 +116,8 @@ export function GitLabModal() {
       dispatch(selectScan(result.scan_id));
       dispatch(fetchScans({})); // Refresh the scan list in sidebar
       handleClose();
-    } catch (error) {
-      alert('创建扫描失败: ' + (error as Error).message);
+    } catch (error: unknown) {
+      alert('创建扫描失败: ' + getErrorMessage(error));
     }
   };
 

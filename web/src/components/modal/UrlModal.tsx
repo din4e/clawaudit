@@ -8,6 +8,7 @@ import { useScanByUrlMutation, useLazyGetRemoteBranchesQuery } from '@/store/ser
 import { selectScan, fetchScans } from '@/store/slices/scansSlice';
 import type { ScanType } from '@/types/api';
 import { Link } from 'lucide-react';
+import { getErrorMessage } from '@/lib/error';
 
 const scanTypeOptions: { value: ScanType; label: string; checked?: boolean }[] = [
   { value: 'security', label: '安全漏洞', checked: true },
@@ -68,8 +69,8 @@ export function UrlModal() {
       dispatch(selectScan(result.scan_id));
       dispatch(fetchScans({})); // Refresh the scan list in sidebar
       handleClose();
-    } catch (error) {
-      alert('创建扫描失败: ' + (error as Error).message);
+    } catch (error: unknown) {
+      alert('创建扫描失败: ' + getErrorMessage(error));
     }
   };
 

@@ -24,7 +24,7 @@ import type {
   StatsResponse,
 } from '@/types/api';
 
-// Create a base query with proper headers handling
+// Create a base query with proper headers handling and error extraction
 const baseQuery = fetchBaseQuery({
   baseUrl: API_BASE,
   prepareHeaders: (headers) => {
@@ -33,9 +33,23 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
+// Enhanced base query with better error handling
+const baseQueryWithErrors: typeof baseQuery = async (args, api, extraOptions) => {
+  const result = await baseQuery(args, api, extraOptions);
+
+  if (result.error && typeof result.error.status === 'number') {
+    // Extract error message from response
+    const data = result.error.data as { error?: string; message?: string };
+    const errorMessage = data?.error || data?.message || `请求失败 (${result.error.status})`;
+    result.error.data = { error: errorMessage };
+  }
+
+  return result;
+};
+
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery,
+  baseQuery: baseQueryWithErrors,
   tagTypes: ['Scan', 'Issue', 'Batch'],
   endpoints: (builder) => ({
     // ==================== Scans ====================
